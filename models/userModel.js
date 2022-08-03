@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema(
             },
             default: 80,
         },
+        active: {
+            type: Boolean,
+            default: true,
+        },
     },
     {
         toJSON: { virtuals: true },
@@ -53,6 +57,20 @@ const userSchema = new mongoose.Schema(
 
 userSchema.virtual('BMI').get(function () {
     return this.weight / Math.pow(this.height, 2);
+});
+
+userSchema.pre(/^find/, function (next) {
+    this.find({ active: { $eq: true } });
+    // this.find({ active: { $ne: false } }); the same as line 63
+    next();
+});
+
+userSchema.post('save', function () {
+    if (this.height < 1.5) console.log('you are small!!');
+});
+
+userSchema.post('findOne', function () {
+    console.log(this);
 });
 
 const User = mongoose.model('Users', userSchema);

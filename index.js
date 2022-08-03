@@ -16,7 +16,9 @@ app.use('/payments', paymentsRouter);
 app.use('/products', productRouter);
 
 mongoose
-    .connect('mongodb://localhost:27017/fullstack')
+    .connect(
+        'mongodb+srv://noamboni:Aa123123@cluster0.hlkpc.mongodb.net/fullstack?retryWrites=true&w=majority'
+    )
     .then(_ => console.log('connected to mongo'));
 
 app.listen(8000, 'localhost', () => {

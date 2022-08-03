@@ -31,7 +31,8 @@ userRouter.post('/', async (req, res) => {
             'birthDate',
             'email',
             'height',
-            'weight'
+            'weight',
+            'active'
         );
         const user = await User.create(filtered);
         res.status(201).json({
@@ -55,6 +56,7 @@ userRouter.get('/', async (req, res) => {
         res.status(200).json({
             status: 'success',
             statusCode: 200,
+            length: users.length,
             data: users,
         });
     } catch (err) {
@@ -70,8 +72,6 @@ userRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const user = await User.findOne({ _id: { $eq: id } });
-        // const user = await User.findById(id);
-        console.log(user);
         res.status(200).json({
             status: 'success',
             statusCode: 200,

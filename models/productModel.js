@@ -17,7 +17,11 @@ const productSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            enum: ['sport', 'music', 'games', 'general'],
+            enum: {
+                values: ['sport', 'music', 'games', 'general'],
+                message:
+                    "category nust be 'sport', 'music', 'games', 'general'",
+            },
             default: 'general',
         },
         size: {
@@ -50,6 +54,7 @@ productSchema.virtual('priceCategory').get(function () {
     };
     return priceCategories[size] ? 'expensive' : 'cheap';
 });
+
 
 const Product = mongoose.model('Products', productSchema);
 module.exports = Product;
