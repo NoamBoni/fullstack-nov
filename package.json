@@ -1,16 +1,16 @@
 {
-  "name": "learnexpress",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon index.js"
-  },
-  "author": "noam boni",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.18.1",
-    "mongoose": "^6.5.0",
-    "validator": "^13.7.0"
-  }
+    "name": "learnexpress",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon index.js"
+    },
+    "author": "noam boni",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.18.1",
+        "mongoose": "^6.5.0",
+        "validator": "^13.7.0"
+    }
 }

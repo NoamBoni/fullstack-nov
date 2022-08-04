@@ -33,6 +33,7 @@ const productSchema = new mongoose.Schema(
     {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
+        id: false,
     }
 );
 
@@ -55,6 +56,9 @@ productSchema.virtual('priceCategory').get(function () {
     return priceCategories[size] ? 'expensive' : 'cheap';
 });
 
+productSchema.pre('init', function (product) {
+    console.log(product);
+});
 
 const Product = mongoose.model('Products', productSchema);
 module.exports = Product;

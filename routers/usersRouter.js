@@ -71,7 +71,8 @@ userRouter.get('/', async (req, res) => {
 userRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const user = await User.findOne({ _id: { $eq: id } });
+        // const user = await User.findOne({ _id: { $eq: id } });
+        const user = await User.findById(id);
         res.status(200).json({
             status: 'success',
             statusCode: 200,

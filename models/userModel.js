@@ -52,6 +52,7 @@ const userSchema = new mongoose.Schema(
     {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
+        id: false,
     }
 );
 
@@ -69,9 +70,14 @@ userSchema.post('save', function () {
     if (this.height < 1.5) console.log('you are small!!');
 });
 
-userSchema.post('findOne', function () {
-    console.log(this);
-});
+// userSchema.post('init', function () {
+//     console.log(this);
+// });
+
+userSchema.pre("save", function (next) {
+    console.log("run before save")
+    next()
+})
 
 const User = mongoose.model('Users', userSchema);
 module.exports = User;
