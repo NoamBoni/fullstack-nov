@@ -22,33 +22,6 @@ function filterObject(obj, ...keys) {
     return filtered;
 }
 
-userRouter.post('/', async (req, res) => {
-    try {
-        const filtered = filterObject(
-            req.body,
-            'name',
-            'password',
-            'birthDate',
-            'email',
-            'height',
-            'weight',
-            'active'
-        );
-        const user = await User.create(filtered);
-        res.status(201).json({
-            status: 'success',
-            statusCode: 201,
-            data: user,
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            statusCode: 400,
-            error: err.message,
-        });
-    }
-});
-
 userRouter.get('/', async (req, res) => {
     try {
         // const users = await User.find({ height: { $lt: 1.8 } });

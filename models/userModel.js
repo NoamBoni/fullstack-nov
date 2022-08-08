@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
 
 const userSchema = new mongoose.Schema(
@@ -14,8 +15,9 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, 'you must enter a password'],
             trim: true,
+            select: false,
+            minlength: 1,
         },
-        birthDate: Date,
         email: {
             type: String,
             required: [true, 'you must enter an email'],
@@ -24,29 +26,19 @@ const userSchema = new mongoose.Schema(
             max: [50, 'too long email address'],
             validate: [isEmail, 'invalid email'],
         },
-        height: {
-            type: Number,
-            validate: {
-                validator: function (val) {
-                    return val > 0;
-                },
-                message: "height can't be lower than 0",
-            },
-            default: 1.75,
-        },
-        weight: {
-            type: Number,
-            validate: {
-                validator: function (val) {
-                    return val > 0;
-                },
-                message: "weight can't be lower than 0",
-            },
-            default: 80,
-        },
         active: {
             type: Boolean,
             default: true,
+        },
+        confirmPassword: {
+            type: String,
+            required: true,
+            validate: {
+                validator: function (confirmPassword) {
+                    return confirmPassword === this.password;
+                },
+                message: "passwords don't match",
+            },
         },
     },
     {
@@ -56,8 +48,14 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-userSchema.virtual('BMI').get(function () {
-    return this.weight / Math.pow(this.height, 2);
+// middleware that encrypts passwords
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+
+    this.password = await bcrypt.hash(this.password, 12);
+    this.confirmPassword = undefined;
+
+    next();
 });
 
 userSchema.pre(/^find/, function (next) {
@@ -65,19 +63,6 @@ userSchema.pre(/^find/, function (next) {
     // this.find({ active: { $ne: false } }); the same as line 63
     next();
 });
-
-userSchema.post('save', function () {
-    if (this.height < 1.5) console.log('you are small!!');
-});
-
-// userSchema.post('init', function () {
-//     console.log(this);
-// });
-
-userSchema.pre("save", function (next) {
-    console.log("run before save")
-    next()
-})
 
 const User = mongoose.model('Users', userSchema);
 module.exports = User;
