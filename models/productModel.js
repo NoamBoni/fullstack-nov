@@ -17,7 +17,11 @@ const productSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            enum: ['sport', 'music', 'games', 'general'],
+            enum: {
+                values: ['sport', 'music', 'games', 'general'],
+                message:
+                    "category nust be 'sport', 'music', 'games', 'general'",
+            },
             default: 'general',
         },
         size: {
@@ -29,6 +33,7 @@ const productSchema = new mongoose.Schema(
     {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
+        id: false,
     }
 );
 
@@ -49,6 +54,10 @@ productSchema.virtual('priceCategory').get(function () {
         large: price > 500,
     };
     return priceCategories[size] ? 'expensive' : 'cheap';
+});
+
+productSchema.pre('init', function (product) {
+    console.log(product);
 });
 
 const Product = mongoose.model('Products', productSchema);

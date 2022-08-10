@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
 
 const userSchema = new mongoose.Schema(
@@ -14,8 +15,9 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, 'you must enter a password'],
             trim: true,
+            select: false,
+            minlength: 1,
         },
-        birthDate: Date,
         email: {
             type: String,
             required: [true, 'you must enter an email'],
@@ -24,35 +26,42 @@ const userSchema = new mongoose.Schema(
             max: [50, 'too long email address'],
             validate: [isEmail, 'invalid email'],
         },
-        height: {
-            type: Number,
-            validate: {
-                validator: function (val) {
-                    return val > 0;
-                },
-                message: "height can't be lower than 0",
-            },
-            default: 1.75,
+        active: {
+            type: Boolean,
+            default: true,
         },
-        weight: {
-            type: Number,
+        confirmPassword: {
+            type: String,
+            required: true,
             validate: {
-                validator: function (val) {
-                    return val > 0;
+                validator: function (confirmPassword) {
+                    return confirmPassword === this.password;
                 },
-                message: "weight can't be lower than 0",
+                message: "passwords don't match",
             },
-            default: 80,
         },
     },
     {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
+        id: false,
     }
 );
 
-userSchema.virtual('BMI').get(function () {
-    return this.weight / Math.pow(this.height, 2);
+// middleware that encrypts passwords
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+
+    this.password = await bcrypt.hash(this.password, 12);
+    this.confirmPassword = undefined;
+
+    next();
+});
+
+userSchema.pre(/^find/, function (next) {
+    this.find({ active: { $eq: true } });
+    // this.find({ active: { $ne: false } }); the same as line 63
+    next();
 });
 
 const User = mongoose.model('Users', userSchema);

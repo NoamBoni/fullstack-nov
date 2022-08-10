@@ -22,32 +22,6 @@ function filterObject(obj, ...keys) {
     return filtered;
 }
 
-userRouter.post('/', async (req, res) => {
-    try {
-        const filtered = filterObject(
-            req.body,
-            'name',
-            'password',
-            'birthDate',
-            'email',
-            'height',
-            'weight'
-        );
-        const user = await User.create(filtered);
-        res.status(201).json({
-            status: 'success',
-            statusCode: 201,
-            data: user,
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            statusCode: 400,
-            error: err.message,
-        });
-    }
-});
-
 userRouter.get('/', async (req, res) => {
     try {
         // const users = await User.find({ height: { $lt: 1.8 } });
@@ -55,6 +29,7 @@ userRouter.get('/', async (req, res) => {
         res.status(200).json({
             status: 'success',
             statusCode: 200,
+            length: users.length,
             data: users,
         });
     } catch (err) {
@@ -69,9 +44,8 @@ userRouter.get('/', async (req, res) => {
 userRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const user = await User.findOne({ _id: { $eq: id } });
-        // const user = await User.findById(id);
-        console.log(user);
+        // const user = await User.findOne({ _id: { $eq: id } });
+        const user = await User.findById(id);
         res.status(200).json({
             status: 'success',
             statusCode: 200,
